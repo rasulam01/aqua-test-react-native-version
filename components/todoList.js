@@ -1,27 +1,21 @@
+// Импорт нужных библиотек
 import React, { useState, useEffect } from "react";
 import type { Node } from "react";
 import {
-  
   View,
-  
   FlatList,
   ActivityIndicator,
   TouchableOpacity,
-  
   Modal,
-  
   Pressable,
   TextInput,
-  
 } from "react-native";
 import styled from "styled-components";
-
-
 import axios from "axios";
 
 export const TodoList: () => Node = () => {
+  // Объявление переменных
   const [data, setData] = useState([]);
-
   const [modalVisible, setModalVisible] = useState(false);
   const [activity, setActivity] = useState(true);
   const [goalContent, setGoalContent] = useState("");
@@ -29,10 +23,12 @@ export const TodoList: () => Node = () => {
   const [editingModeValue, setEditingModeValue] = useState("");
   const url = "https://61851c6723a2fe0017fff39d.mockapi.io/todos";
 
+  // Функция, отвечающая за видимость модального окна
   function creater() {
     setModalVisible(!modalVisible);
   }
 
+  // Функция редактирования цели с пут-запросом
   const editData = (id) => {
     const updatedData = [...data].map((info) => {
       if (info.id === id) {
@@ -52,17 +48,21 @@ export const TodoList: () => Node = () => {
     setEditingModeValue("");
   };
 
+  // Гет-запрос
   const getData = async () => {
     const response = await axios.get(url);
     setData(response.data);
     setActivity(false);
   };
 
+  // Пост-запрос
   const postData = () => {
+      
     creater();
     const object = {
       name: goalContent,
       done: false,
+      time: new Date().toISOString()
     };
     axios.post(url, object).then(() => {
       const temp = [...data];
@@ -71,19 +71,22 @@ export const TodoList: () => Node = () => {
     });
   };
 
+  // Запрос на удаление
   const deleteData = (id) => {
     axios.delete(`https://61851c6723a2fe0017fff39d.mockapi.io/todos/${id}`);
     const filtered = data.filter((item) => item.id !== id);
+
     setData(filtered);
   };
 
+  // Гет-запрос при маунте страницы
   useEffect(() => {
     getData();
-    console.log(data);
   }, []);
 
   return (
     <Container>
+      {/* Модальное окно */}
       <Modal
         animationType="slide"
         visible={modalVisible}
@@ -108,8 +111,10 @@ export const TodoList: () => Node = () => {
           </ModalContent>
         </ModalWindow>
       </Modal>
+      {/* Модальное окно  */}
+      {/* Верхняя часть */}
       <Block>
-        <Content>
+        <Content style={{ borderLeftWidth: 5, borderColor: "darkgray" }}>
           <View>
             <Title>Goal Creator</Title>
           </View>
@@ -117,13 +122,15 @@ export const TodoList: () => Node = () => {
             <TouchableOpacity>
               <Pressable onPress={() => setModalVisible(!modalVisible)}>
                 <CreateButton>
-                  <ButtonText>Create</ButtonText>
+                  <ButtonText style={{ fontSize: 18 }}>Create</ButtonText>
                 </CreateButton>
               </Pressable>
             </TouchableOpacity>
           </View>
         </Content>
       </Block>
+      {/* Верхняя часть */}
+      {/* Часть с данными из бэка */}
       <Block>
         {activity ? (
           <ActivityIndicator />
@@ -131,6 +138,7 @@ export const TodoList: () => Node = () => {
           <FlatList
             keyExtractor={(item) => item.id}
             data={data}
+            style={{ borderTopWidth: 2, borderColor: "lightskyblue" }}
             renderItem={({ item }) => {
               const updateStatus = (id) => {
                 axios
@@ -156,26 +164,30 @@ export const TodoList: () => Node = () => {
                       }}
                     />
                   ) : (
-                    <Title
+                    <View
                       style={{
                         padding: 5,
                         marginLeft: 10,
-                        borderWidth: 1,
+                        borderLeftWidth: 3,
                         borderColor: item.done ? "green" : "red",
+                        maxWidth: 175,
                       }}
                     >
-                      {item.id}) {item.name}
-                    </Title>
+                      <Title>
+                        {item.name} {"\n"}Date:{"\n"}
+                        {item.time.slice(0, 10)} {item.time.slice(11, 19)}
+                      </Title>
+                    </View>
                   )}
 
                   <ButtonBlock>
                     <TouchableOpacity>
-                        <Pressable onPress={() => updateStatus(item.id)}>
-                            <EditButton>
-                                <ButtonText>Update</ButtonText>
-                            </EditButton>
-                        </Pressable>
-                    </TouchableOpacity>  
+                      <Pressable onPress={() => updateStatus(item.id)}>
+                        <EditButton>
+                          <ButtonText>Update</ButtonText>
+                        </EditButton>
+                      </Pressable>
+                    </TouchableOpacity>
                     {editingMode ? (
                       <TouchableOpacity>
                         <Pressable onPress={() => editData(item.id)}>
@@ -208,6 +220,7 @@ export const TodoList: () => Node = () => {
           />
         )}
       </Block>
+      {/* Часть с данными из бэка */}
     </Container>
   );
 };
@@ -219,7 +232,7 @@ const Container = styled.View`
   justify-content: space-around
 `;
 const Block = styled.View`
-  min-height: 75px
+  min-height: 75px;
 `;
 
 const Content = styled.View`
@@ -227,7 +240,7 @@ const Content = styled.View`
   align-items: center
   justify-content: space-between
   padding: 15px
-
+  border-left: 5px solid lightgray
   flex-direction: row
 `;
 const Title = styled.Text`
@@ -280,7 +293,7 @@ const Data = styled.View`
 `;
 
 const ButtonText = styled.Text`
-  color: whitesmoke
+  color: whitesmoke;
 `;
 
 const ButtonBlock = styled.View`

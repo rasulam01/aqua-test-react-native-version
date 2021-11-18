@@ -10,10 +10,10 @@ import React from 'react';
 import type {Node} from 'react'
 
 
-
+// Импорт файла приложения
 import { TodoList } from './components/todoList';
 
-
+// Основной файл
 const App: () => Node = () => {
   return (
     <TodoList /> 
