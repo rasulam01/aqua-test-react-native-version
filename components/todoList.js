@@ -100,7 +100,7 @@ export const TodoList: () => Node = () => {
 
             <TouchableOpacity>
               <Pressable onPress={postData}>
-                <CreateButton style={{ marginLeft: 115, marginTop: 20 }}>
+                <CreateButton style={{ marginLeft: 30, marginTop: 15 }}>
                   <ButtonText>Create</ButtonText>
                 </CreateButton>
               </Pressable>
@@ -119,7 +119,7 @@ export const TodoList: () => Node = () => {
             <TouchableOpacity>
               <Pressable onPress={() => setModalVisible(!modalVisible)}>
                 <CreateButton>
-                  <ButtonText style={{ fontSize: 18 }}>Create</ButtonText>
+                  <ButtonText style={{ fontSize: 18 }}>Create your goal!</ButtonText>
                 </CreateButton>
               </Pressable>
             </TouchableOpacity>
@@ -128,7 +128,7 @@ export const TodoList: () => Node = () => {
       </Block>
       {/* Верхняя часть */}
       {/* Часть с данными из бэка */}
-      {data.length === 0 ? <ModalWindow><Title>There are no goals set as of this moment</Title></ModalWindow> : 
+      {data.length === 0 ? <ModalWindow><Title>There are no goals set as of this moment.{"\n"}The time has come to change it.</Title></ModalWindow> : 
       <Block>
         
         {activity ? (
@@ -263,9 +263,9 @@ background-color: lightgray
 align-items: center
 justify-content: center
 border-radius: 10px
-height: 30px
-width: 60px
-margin-right: 15px
+height: 40px
+width: 65px
+margin-right: 12px
 `;
 const CreateButton = styled.View`
 background-color: darkblue
@@ -273,7 +273,7 @@ align-items: center
 justify-content: center
 border-radius: 10px
 height: 50px
-width: 120px
+width: 240px
 margin-right: 10px
 `;
 const DeleteButton = styled.View`
@@ -281,9 +281,9 @@ background-color: red
 align-items: center
 justify-content: center
 border-radius: 10px
-height: 30px
-width: 60px
-margin-right: 10px
+height: 40px
+width: 65px
+margin-right: 12px
 `;
 
 const Data = styled.View`
@@ -298,7 +298,7 @@ const Data = styled.View`
 const DataInfo = styled.View`
   padding: 5px
   margin-left: 10px
-  max-width: 175px
+  max-width: 150px
 `;
 const ButtonText = styled.Text`
   color: whitesmoke;
