@@ -9,9 +9,11 @@ import {
   Modal,
   Pressable,
   TextInput,
+  
 } from "react-native";
 import styled from "styled-components";
 import axios from "axios";
+
 
 export const TodoList: () => Node = () => {
   // Объявление переменных
@@ -39,13 +41,12 @@ export const TodoList: () => Node = () => {
           })
           .then(() => {
             getData();
+            setEditingMode(null);
+            setEditingModeValue("");
           });
       }
       return info;
     });
-    setData(updatedData);
-    setEditingMode(null);
-    setEditingModeValue("");
   };
 
   // Гет-запрос
@@ -57,17 +58,14 @@ export const TodoList: () => Node = () => {
 
   // Пост-запрос
   const postData = () => {
-      
     creater();
     const object = {
       name: goalContent,
       done: false,
-      time: new Date().toISOString()
+      time: new Date().toISOString(),
     };
-    axios.post(url, object).then(() => {
-      const temp = [...data];
-      temp.push(...data, object);
-      setData(temp);
+    axios.post(url, object).then(() => {      
+      getData()
     });
   };
 
@@ -75,7 +73,6 @@ export const TodoList: () => Node = () => {
   const deleteData = (id) => {
     axios.delete(`https://61851c6723a2fe0017fff39d.mockapi.io/todos/${id}`);
     const filtered = data.filter((item) => item.id !== id);
-
     setData(filtered);
   };
 
@@ -114,7 +111,7 @@ export const TodoList: () => Node = () => {
       {/* Модальное окно  */}
       {/* Верхняя часть */}
       <Block>
-        <Content style={{ borderLeftWidth: 5, borderColor: "darkgray" }}>
+        <Content style={{ borderBottomWidth: 5, borderColor: "darkgray"}}>
           <View>
             <Title>Goal Creator</Title>
           </View>
@@ -131,14 +128,21 @@ export const TodoList: () => Node = () => {
       </Block>
       {/* Верхняя часть */}
       {/* Часть с данными из бэка */}
+      {data.length === 0 ? <ModalWindow><Title>There are no goals set as of this moment</Title></ModalWindow> : 
       <Block>
+        
         {activity ? (
           <ActivityIndicator />
         ) : (
           <FlatList
             keyExtractor={(item) => item.id}
             data={data}
-            style={{ borderTopWidth: 2, borderColor: "lightskyblue" }}
+            style={{
+              borderTopWidth: 2,
+              borderColor: 'lightskyblue',
+              backgroundColor: 'turquoise',
+              paddingBottom: 5                            
+            }}
             renderItem={({ item }) => {
               const updateStatus = (id) => {
                 axios
@@ -151,6 +155,7 @@ export const TodoList: () => Node = () => {
                   });
               };
               return (
+                
                 <Data>
                   {editingMode === item.id ? (
                     <TextInput
@@ -164,27 +169,26 @@ export const TodoList: () => Node = () => {
                       }}
                     />
                   ) : (
-                    <View
-                      style={{
-                        padding: 5,
-                        marginLeft: 10,
+                    <DataInfo
+                      style={{                    
                         borderLeftWidth: 3,
-                        borderColor: item.done ? "green" : "red",
-                        maxWidth: 175,
+                        borderColor: item.done ? "green" : "red",                        
                       }}
                     >
                       <Title>
                         {item.name} {"\n"}Date:{"\n"}
-                        {item.time.slice(0, 10)} {item.time.slice(11, 19)}
+                        {item.time.slice(0, 10)} {"\n"}{item.time.slice(11, 19)}
                       </Title>
-                    </View>
+                    </DataInfo>
                   )}
 
                   <ButtonBlock>
                     <TouchableOpacity>
                       <Pressable onPress={() => updateStatus(item.id)}>
                         <EditButton>
-                          <ButtonText>Update</ButtonText>
+                          <ButtonText>
+                            {item.done ? "Not done" : "Done"}
+                          </ButtonText>
                         </EditButton>
                       </Pressable>
                     </TouchableOpacity>
@@ -219,7 +223,7 @@ export const TodoList: () => Node = () => {
             }}
           />
         )}
-      </Block>
+      </Block>}
       {/* Часть с данными из бэка */}
     </Container>
   );
@@ -228,8 +232,7 @@ export const TodoList: () => Node = () => {
 const Container = styled.View`
   flex: 1
   border-width: 5px
-
-  justify-content: space-around
+  justify-content: flex-start
 `;
 const Block = styled.View`
   min-height: 75px;
@@ -292,6 +295,11 @@ const Data = styled.View`
   
 `;
 
+const DataInfo = styled.View`
+  padding: 5px
+  margin-left: 10px
+  max-width: 175px
+`;
 const ButtonText = styled.Text`
   color: whitesmoke;
 `;
@@ -324,3 +332,5 @@ const InputField = styled.TextInput`
   border-radius: 10px
         
 `;
+
+
